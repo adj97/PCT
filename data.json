@@ -1,0 +1,9 @@
+{
+    "structure": [{
+        "name": "{}",
+        "content": [{
+            "name": "readme.md",
+            "content": "# {}"
+        }]
+    }]
+}
