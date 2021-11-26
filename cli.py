@@ -6,6 +6,7 @@ def help():
     ]
     print('\n'.join(print_message))
 
+
 commands = [
     "help",
     "new"

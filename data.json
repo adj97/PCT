@@ -1,9 +1,46 @@
 {
-    "structure": [{
-        "name": "{}",
-        "content": [{
-            "name": "readme.md",
-            "content": "# {}"
-        }]
-    }]
+    "structure": [
+        {
+            "name": "{}",
+            "content": [
+                {
+                    "name": "readme.md",
+                    "content": "# {}"
+                },
+                {
+                    "name": "main.py",
+                    "content": "print(\"{}\")"
+                },
+                {
+                    "name": "helpers.py",
+                    "content": "print(\"{}\")"
+                },
+                {
+                    "name": "commands.py",
+                    "content": "print(\"{}\")"
+                },
+                {
+                    "name": "cli.py",
+                    "content": "print(\"{}\")"
+                },
+                {
+                    "name": ".gitignore",
+                    "content": "**/__pycache__*\n.pytest_cache*"
+                },
+                {
+                    "name": "tests",
+                    "content": [
+                        {
+                            "name": "__init__.py",
+                            "content": ""
+                        },
+                        {
+                            "name": "test_cases.py",
+                            "content": "print(\"{}\")"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
 }

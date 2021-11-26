@@ -1,5 +1,6 @@
 from helpers import *
 
+
 def output():
     expected_output = [
         "pct:  output: qwertyuiop12345",
@@ -12,5 +13,5 @@ def output():
         ["h", "qwertyuiop12345"]
     ]
 
-    for i,e in zip(input, expected_output):
+    for i, e in zip(input, expected_output):
         assert output(i[0], i[1]) == e

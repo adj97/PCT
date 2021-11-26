@@ -1,8 +1,8 @@
 from helpers import *
 from cli import *
 
-from os import mkdir
-from json import load, dumps
+from os import mkdir, getcwd
+from json import load
 
 
 def new(args):
@@ -11,19 +11,21 @@ def new(args):
 
     f = open("data.json")
     data = load(f)
-    process(data["structure"])
+
+    # recursive function
+    process(data["structure"], getcwd())
 
     return
 
 
-def process(node, root=None):
-    print("node: " + str(node))
+def process(node, root):
     for obj in node:
-        print("obj: " + str(obj))
         if type(obj["content"]) == list:
-            folder_name = obj["name"].format(new_project_name)
+            folder_name = "/".join([root,
+                                   obj["name"].format(new_project_name)])
             mkdir(folder_name)
             process(obj["content"], folder_name)
         elif type(obj["content"] == str):
-            f = open(root + obj["name"], "x")
+            file_name = "/".join([root, obj["name"]])
+            f = open(file_name, "x")
             f.write(obj["content"].format(new_project_name))

@@ -6,7 +6,7 @@ from commands import *
 if __name__ == "__main__":
 
     # empty args
-    if len(argv)==1:
+    if len(argv) == 1:
         # help
         help()
         exit()
@@ -21,9 +21,9 @@ if __name__ == "__main__":
                 help()
             elif command == commands[1]:
                 # new
-                output("o","New")
+                output("o", "New")
                 new(args)
-            
+
             # healthy finish
             output("o", "Completed")
         except Exception as e:
