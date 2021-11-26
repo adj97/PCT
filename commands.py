@@ -27,5 +27,4 @@ def process(node, root):
         elif type(obj["content"][0] == str):
             file_name = "/".join([root, obj["name"]])
             f = open(file_name, "x")
-            #print("\n".join(obj["content"]))
             f.write("\n".join(obj["content"]).format(new_project_name))
