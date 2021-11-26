@@ -1,42 +1,144 @@
 {
     "structure": [
         {
-            "name": "{}",
+            "name": "{0}",
             "content": [
                 {
                     "name": "readme.md",
-                    "content": "# {}"
+                    "content": [
+                        "#{0}",
+                        "Welcome to {0}, an _insert description here_",
+                        "Commands include: _insert commands here_",
+                        "Usage: `{0} <command> [parameters]`",
+                        "## Bash Alias",
+                        "    {0}(){{",
+                        "            python3 /<srcpath>/{0}/main.py $@",
+                        "    }}",
+                        "## Commands",
+                        "### {0} help",
+                        "`{0} help`",
+                        "## PyTests",
+                        "Install: `pip install pytest`",
+                        "Run: `pytest tests/`"
+                    ]
                 },
                 {
                     "name": "main.py",
-                    "content": "print(\"{}\")"
+                    "content": [
+                        "from sys import argv",
+                        "from cli import *",
+                        "from helpers import *",
+                        "from commands import *",
+                        "",
+                        "if __name__ == \"__main__\":",
+                        "    # empty args",
+                        "    if len(argv)==1:",
+                        "        help()",
+                        "        exit()",
+                        "",
+                        "    # command decomposition",
+                        "    command, args = argv[1], argv[2:]",
+                        "",
+                        "    if command in commands:",
+                        "        try:",
+                        "            if command == commands[0]:",
+                        "                help()",
+                        "            elif command == commands[1]:",
+                        "                output(\"o\",\"Command1\")",
+                        "                command1(args)",
+                        "            # healthy finish",
+                        "            output(\"o\", \"Completed\")",
+                        "        except Exception as e:",
+                        "            output(\"o\", \"Aborted\")",
+                        "            output(\"e\", e)",
+                        "    else:",
+                        "        output(\"e\", \"Unrecognised command: \" + command)",
+                        "        help()",
+                        ""
+                    ]
                 },
                 {
                     "name": "helpers.py",
-                    "content": "print(\"{}\")"
+                    "content": [
+                        "output_types={{",
+                        "    \"o\":\" output\",",
+                        "    \"e\":\"  error\",",
+                        "    \"h\":\"   help\"",
+                        "}}",
+                        "",
+                        "def output(type, output):",
+                        "    output = [\"{0}\", output_types[type], str(output)]",
+                        "    print(\": \".join(output))",
+                        ""
+                    ]
                 },
                 {
                     "name": "commands.py",
-                    "content": "print(\"{}\")"
+                    "content": [
+                        "from helpers import *",
+                        "from cli import *",
+                        "",
+                        "def command1(args):",
+                        "    pass",
+                        "    return",
+                        ""
+                    ]
                 },
                 {
                     "name": "cli.py",
-                    "content": "print(\"{}\")"
+                    "content": [
+                        "def help():",
+                        "    print_message = [",
+                        "        \"Welcome to <tool name>, a cli tool for <description>\",",
+                        "        \"Commands include: \" + \", \".join(commands),",
+                        "        \"usage: <tool name> <command> [parameters]\"",
+                        "    ]",
+                        "    print(\"\\n\".join(print_message))",
+                        "",
+                        "commands = [",
+                        "    \"help\",",
+                        "    \"command1\"",
+                        "]",
+                        ""
+                    ]
                 },
                 {
                     "name": ".gitignore",
-                    "content": "**/__pycache__*\n.pytest_cache*"
+                    "content": [
+                        "**/__pycache__*",
+                        ".pytest_cache*"
+                    ]
                 },
                 {
                     "name": "tests",
                     "content": [
                         {
                             "name": "__init__.py",
-                            "content": ""
+                            "content": [
+                                ""
+                            ]
                         },
                         {
                             "name": "test_cases.py",
-                            "content": "print(\"{}\")"
+                            "content": [
+                                "from helpers import *",
+                                "",
+                                "def output():",
+                                "    expected_output = [",
+                                "        \"{0}:  output: qwertyuiop12345\",",
+                                "        \"{0}:   error: qwertyuiop12345\",",
+                                "        \"{0}:    help: qwertyuiop12345\"",
+                                "    ]",
+                                "    input = [",
+                                "        [\"o\", \"qwertyuiop12345\"],",
+                                "        [\"e\", \"qwertyuiop12345\"],",
+                                "        [\"h\", \"qwertyuiop12345\"]",
+                                "    ]",
+                                "",
+                                "    for i,e in zip(input, expected_output):",
+                                "        assert output(i[0], i[1]) == e",
+                                ""
+                            ]
                         }
                     ]
                 }
