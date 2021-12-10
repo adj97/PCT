@@ -4,7 +4,7 @@ This repo is itself a python cli tool that generates the boilerplate source code
 ## Bash Alias
     pct(){
         python /<srcpath>/main.py $@
-        cd $2
+        code $2
     }
 
 ## PyTests
