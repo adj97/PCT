@@ -1,3 +1,5 @@
+from os import chdir, getcwd
+from os.path import exists
 from helpers import *
 from cli import *
 
@@ -9,11 +11,23 @@ def new(args):
     global new_project_name
     new_project_name = args[0]
 
-    f = open("data.json")
+    print(getcwd())
+
+    if exists(new_project_name):
+        raise Exception("That project already exists")
+    elif getcwd().split("\\")[-1]==new_project_name:
+        raise Exception("I think you're already in that project folder")
+
+    dj_path = __file__.replace("commands.py","data.json")
+
+    f = open(dj_path)
     data = load(f)
 
     # recursive function
     process(data["structure"], getcwd())
+
+    # move into new directory
+    chdir(new_project_name)
 
     return
 
