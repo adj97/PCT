@@ -1,4 +1,5 @@
-from os import mkdir
+from os import getcwd, mkdir
+from os.path import expanduser
 from inspect import stack
 
 output_types = {
@@ -36,3 +37,40 @@ def checkargs(args):
     if method == "new":
         if len(args) != 1:
             raise Exception("The \"new\" command expects a single argument")
+
+def mkba():
+
+    # gather prerequesite strings
+    mainpath = "/".join([*getcwd().split("\\"), new_project_name, "main.py"]) # filepath of main.py for the NEW tool
+    tilde = expanduser("~/") # make ~ explicit for paths
+    pct_strings = [ # bash alias for the created python cli tool
+        "# Alias for python cli tool " + new_project_name,
+        new_project_name + "(){",
+        "    python " + mainpath + " $@",
+        "}"
+    ]
+    sba_strings = [ # bashrc code to source bash_aliases
+        "# Separate file for custom bash aliases",
+        "if [ -f ~/.bash_aliases ]; then",
+        "    . ~/.bash_aliases",
+        "fi"
+    ]
+
+    pct_alias, source_bash_aliases = compile_alias(pct_strings, sba_strings)
+
+    # read(r) then append(+) bashrc
+    with open(tilde + '.bashrc', 'r+') as bashrc:
+        if ". ~/.bash_aliases" not in bashrc.read():
+            bashrc.write(source_bash_aliases)
+
+    # (create and) write to bash_aliases
+    with open(tilde + '.bash_aliases', 'a') as bash_aliases:
+        bash_aliases.write(pct_alias)
+
+    return
+
+def compile_alias(*argv):
+    stringss = []
+    for i,strings in enumerate(argv):
+        stringss.append("\n".join(["","",*strings,""]))
+    return stringss

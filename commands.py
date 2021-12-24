@@ -1,8 +1,14 @@
-from os import chdir, getcwd
+from os import getcwd
 from os.path import exists
 from json import load
 
-from helpers import process, checkargs, set_npn
+from helpers import (
+    output,
+    process, 
+    checkargs, 
+    set_npn, 
+    mkba
+)
 
 def new(args):
 
@@ -21,9 +27,14 @@ def new(args):
     data = load(f)
 
     # recursive function
+    output("o", "Creating repository structure")
     process(data["structure"], getcwd())
 
-    # move into new directory
-    chdir(new_project_name)
+    # create bash alias
+    output("o", "Writing bash alias")
+    mkba()
+
+    # bash alias will open code
+    output("o", "Opening vscode in new repository")
 
     return
