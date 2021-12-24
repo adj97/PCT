@@ -3,7 +3,8 @@ This repo is itself a python cli tool that generates the boilerplate source code
 
 ## Bash Alias
     pct(){
-            python3 /<srcpath>/main.py $@
+        python /<srcpath>/main.py $@
+        code $2
     }
 
 ## PyTests
