@@ -7,7 +7,8 @@ from helpers import (
     process, 
     checkargs, 
     set_npn, 
-    mkba
+    mkba,
+    generate_or_update_template
 )
 
 def new(args):
@@ -23,7 +24,15 @@ def new(args):
 
     dj_path = __file__.replace("commands.py","data.json")
 
-    with open(dj_path) as f:
+    # Boolean for the local data.json being older than the latest push to the template repo
+    dj_is_old = False
+
+    if not exists(dj_path) or dj_is_old:
+        generate_or_update_template()
+
+    exit(1)
+
+    with open(dj_path, "r") as f:
         data = load(f)
 
     # recursive function

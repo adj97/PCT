@@ -1,6 +1,17 @@
-from os import getcwd, mkdir
-from os.path import expanduser
+from os import (
+    getcwd, 
+    mkdir, 
+    walk, 
+    chmod, 
+    remove, 
+    rmdir,
+    listdir
+)
+from os.path import expanduser, join
+from stat import S_IWUSR
 from inspect import stack
+from git import Repo
+from random import randint
 
 output_types = {
     "o": " output",
@@ -74,3 +85,49 @@ def compile_alias(*argv):
     for i,strings in enumerate(argv):
         stringss.append("\n".join(["","",*strings,""]))
     return stringss
+
+def _rmtree(top):
+    chmod(top, S_IWUSR)
+    for root, dirs, files in walk(top, topdown=False):
+        for name in files:
+            filename = join(root, name)
+            chmod(filename, S_IWUSR)
+            remove(filename)
+        for name in dirs:
+            rmdir(join(root, name))
+    rmdir(top)  
+
+def generate_or_update_template():
+    # uri's
+    template_remote_url = "https://github.com/adj97/PythonCliToolTemplate.git"
+    template_local_path = getcwd() + "T_" + str(randint(100000, 999999))
+
+    # Pull template repo
+    Repo.clone_from(template_remote_url, template_local_path, branch='main')
+
+    # get folder structure of pulled repo
+    file_structure=listdir(template_local_path)
+    file_structure.remove('.git')
+    for i, filename in enumerate(file_structure):
+        if len(filename.split("."))==1:
+            file_structure[i]=[filename + "\\" + c for c in listdir(template_local_path + "\\" + filename)]
+    print(file_structure)
+
+    # read each file
+    for file in file_structure:
+        with open(template_local_path + "\\" + file, "r") as f:
+            print(f.readline())
+
+    dj_path = __file__.replace("helpers.py","data.json")
+
+    # write to new datajson file
+    with open(dj_path, "w") as datajson:
+        datajson.write("\n".join([
+            "{",
+            "    \"structure\": [",
+            "    ]",
+            "}"
+        ]))
+
+    # Delete template repo
+    _rmtree(template_local_path)
