@@ -32,7 +32,7 @@ if __name__ == "__main__":
         except Exception as e:
             output("o", "Aborted")
             output("e", e)
-            print(format_exc())
+            #print(format_exc())
             exit(1)
     else:
         output("e", "Unrecognised command: " + command)
