@@ -23,8 +23,8 @@ def new(args):
 
     dj_path = __file__.replace("commands.py","data.json")
 
-    f = open(dj_path)
-    data = load(f)
+    with open(dj_path) as f:
+        data = load(f)
 
     # recursive function
     output("o", "Creating repository structure")
