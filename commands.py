@@ -1,17 +1,14 @@
 from os import chdir, getcwd
 from os.path import exists
-from helpers import *
-from cli import *
-
-from os import mkdir, getcwd
 from json import load
 
+from helpers import process, checkargs, set_npn
 
 def new(args):
-    global new_project_name
-    new_project_name = args[0]
 
-    print(getcwd())
+    checkargs(args)
+
+    new_project_name = set_npn(args[0])
 
     if exists(new_project_name):
         raise Exception("That project already exists")
@@ -30,15 +27,3 @@ def new(args):
     chdir(new_project_name)
 
     return
-
-
-def process(node, root):
-    for obj in node:
-        if type(obj["content"][0]) == dict:
-            folder_name = "/".join([root, obj["name"].format(new_project_name)])
-            mkdir(folder_name)
-            process(obj["content"], folder_name)
-        elif type(obj["content"][0] == str):
-            file_name = "/".join([root, obj["name"]])
-            f = open(file_name, "x")
-            f.write("\n".join(obj["content"]).format(new_project_name))
