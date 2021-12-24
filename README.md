@@ -3,8 +3,12 @@ This repo is itself a python cli tool that generates the boilerplate source code
 
 ## Bash Alias
     pct(){
-        python /<srcpath>/main.py $@
-        code $2
+        python <src path>/pct/main.py $@
+        exitcode=$?
+        if [ "${exitcode}" -eq 0 ];
+        then
+            code $2
+        fi
     }
 
 ## PyTests
