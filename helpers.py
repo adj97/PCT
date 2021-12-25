@@ -4,14 +4,14 @@ from os import (
     walk, 
     chmod, 
     remove, 
-    rmdir,
-    listdir
+    rmdir
 )
 from os.path import expanduser, join
 from stat import S_IWUSR
 from inspect import stack
 from git import Repo
 from random import randint
+from json import dumps
 
 output_types = {
     "o": " output",
@@ -103,31 +103,58 @@ def generate_or_update_template():
     template_local_path = getcwd() + "T_" + str(randint(100000, 999999))
 
     # Pull template repo
+    output("o", "Pulling remote template repo")
     Repo.clone_from(template_remote_url, template_local_path, branch='main')
+    _rmtree(template_local_path + "\.git")
+
+    # initial empty data_json
+    global data_json
+    data_json = {
+        "structure" : [
+            {
+                "name" : "{0}",
+                "content" : []
+            }
+        ]
+    }
 
     # get folder structure of pulled repo
-    file_structure=listdir(template_local_path)
-    file_structure.remove('.git')
-    for i, filename in enumerate(file_structure):
-        if len(filename.split("."))==1:
-            file_structure[i]=[filename + "\\" + c for c in listdir(template_local_path + "\\" + filename)]
-    print(file_structure)
+    output("o", "Analysing template repo file structure")
+    for root, d_names, f_names in walk(template_local_path):
+        rroot = root.replace(template_local_path, "")
+        dirlevel = len(rroot.split("\\"))-1
+        print("rroot: ", rroot, ", d_names:", d_names, ", f_names:", f_names)
+
+        for filename in f_names:
+            block = {"name": filename, "content": []}
+            #print("Add a file block for " + filename, block)
+            _dj_append_block(block, dirlevel)
+        for dirname in d_names:
+            block = {"name": dirname, "content": []}
+            #print("Add a dir block for " + dirname, block)
+            _dj_append_block(block, dirlevel)
 
     # read each file
-    for file in file_structure:
-        with open(template_local_path + "\\" + file, "r") as f:
-            print(f.readline())
+    # for file in file_structure:
+    #     with open(file, "r") as f:
+    #         print(file.replace(template_local_path + "\\",""), f.readline())
 
-    dj_path = __file__.replace("helpers.py","data.json")
+    data_json_dump = dumps(data_json, indent=4)
 
     # write to new datajson file
-    with open(dj_path, "w") as datajson:
-        datajson.write("\n".join([
-            "{",
-            "    \"structure\": [",
-            "    ]",
-            "}"
-        ]))
+    dj_path = __file__.replace("helpers.py","data.json")
+    with open(dj_path, "w") as dj_file:
+        dj_file.write(dumps(data_json, indent=4))
 
     # Delete template repo
     _rmtree(template_local_path)
+
+def _dj_append_block(block, dirlevel):
+    print("dirlevel", dirlevel)
+    if dirlevel == 0:
+        data_json["structure"][0]["content"].append(block)
+    if dirlevel == 1:
+        print([data_json["structure"][0]["content"][i] for i in len(data_json["structure"][0]["content"]) if data_json["structure"][0]["content"] ])
+        data_json["structure"][0]["content"].append(block)
+    else:
+        print("sorry")
