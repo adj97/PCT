@@ -28,16 +28,16 @@ def set_npn(npn):
     new_project_name = npn
     return npn
 
-def process(node, root):
-    for obj in node:
-        if type(obj["content"][0]) == dict:
-            folder_name = "/".join([root, obj["name"].format(new_project_name)])
+def process(dictionary, root):
+    for key in dictionary:
+        if type(dictionary[key]) == dict:
+            folder_name = "\\".join([root,key])
             mkdir(folder_name)
-            process(obj["content"], folder_name)
-        elif type(obj["content"][0] == str):
-            file_name = "/".join([root, obj["name"]])
-            f = open(file_name, "x")
-            f.write("\n".join(obj["content"]).format(new_project_name))
+            process(dictionary[key], folder_name)
+        elif type(dictionary[key]) == list:
+            file_name = "\\".join([root,key])
+            with open(file_name, "w") as f:
+                f.write("\n".join(dictionary[key]))
 
 def checkargs(args):
     # inspect.stack() returns the full stack trace info
@@ -110,51 +110,43 @@ def generate_or_update_template():
     # initial empty data_json
     global data_json
     data_json = {
-        "structure" : [
-            {
-                "name" : "{0}",
-                "content" : []
-            }
-        ]
+        "npn_ph": {}
     }
 
-    # get folder structure of pulled repo
-    output("o", "Analysing template repo file structure")
     for root, d_names, f_names in walk(template_local_path):
-        rroot = root.replace(template_local_path, "")
-        dirlevel = len(rroot.split("\\"))-1
-        print("rroot: ", rroot, ", d_names:", d_names, ", f_names:", f_names)
+        # relative root path
+        rroot = root.replace(template_local_path,"").replace("\\","")
+        
+        # set root obj 
+        if rroot == "":
+            # initial as base location
+            rootobj = data_json["npn_ph"]
+        else:
+            # further loops from previous rootobj
+            rootobj = rootobj[rroot]
 
-        for filename in f_names:
-            block = {"name": filename, "content": []}
-            #print("Add a file block for " + filename, block)
-            _dj_append_block(block, dirlevel)
-        for dirname in d_names:
-            block = {"name": dirname, "content": []}
-            #print("Add a dir block for " + dirname, block)
-            _dj_append_block(block, dirlevel)
+        # create dirs as empty dict, for further population
+        for dn in d_names:
+            rootobj[dn] = {}
 
-    # read each file
-    # for file in file_structure:
-    #     with open(file, "r") as f:
-    #         print(file.replace(template_local_path + "\\",""), f.readline())
+        # create files as a string array of the file lines
+        for fn in f_names:
+            fileobj = []
+            full_file_path = root + "\\" + fn
+            with open(full_file_path, "r") as f:
+                for line in f.readlines():
+                    fileobj.append(line.replace("\n",""))
+            rootobj[fn] = fileobj
 
     data_json_dump = dumps(data_json, indent=4)
 
     # write to new datajson file
     dj_path = __file__.replace("helpers.py","data.json")
     with open(dj_path, "w") as dj_file:
-        dj_file.write(dumps(data_json, indent=4))
+        dj_file.write(data_json_dump)
 
     # Delete template repo
     _rmtree(template_local_path)
 
-def _dj_append_block(block, dirlevel):
-    print("dirlevel", dirlevel)
-    if dirlevel == 0:
-        data_json["structure"][0]["content"].append(block)
-    if dirlevel == 1:
-        print([data_json["structure"][0]["content"][i] for i in len(data_json["structure"][0]["content"]) if data_json["structure"][0]["content"] ])
-        data_json["structure"][0]["content"].append(block)
-    else:
-        print("sorry")
+def rename_dict_key(d):
+    return {new_project_name if k == "npn_ph" else k:v for k,v in d.items()}

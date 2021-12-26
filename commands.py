@@ -4,11 +4,12 @@ from json import load
 
 from helpers import (
     output,
-    process, 
+    newprocess, 
     checkargs, 
     set_npn, 
     mkba,
-    generate_or_update_template
+    generate_or_update_template,
+    rename_dict_key
 )
 
 def new(args):
@@ -30,14 +31,17 @@ def new(args):
     if not exists(dj_path) or dj_is_old:
         generate_or_update_template()
 
-    exit(1)
-
     with open(dj_path, "r") as f:
         data = load(f)
 
+    # set project root node name
+    data = rename_dict_key(data)
+
     # recursive function
     output("o", "Creating repository structure")
-    process(data["structure"], getcwd())
+    #process(data["structure"], getcwd())
+    newprocess(data, getcwd())
+    exit(1)
 
     # create bash alias
     output("o", "Writing bash alias")
