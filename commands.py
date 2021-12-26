@@ -4,12 +4,13 @@ from json import load
 
 from helpers import (
     output,
-    newprocess, 
+    process, 
     checkargs, 
     set_npn, 
     mkba,
     generate_or_update_template,
-    rename_dict_key
+    rename_dict_key,
+    pct_specialise
 )
 
 def new(args):
@@ -37,17 +38,19 @@ def new(args):
     # set project root node name
     data = rename_dict_key(data)
 
-    # recursive function
-    output("o", "Creating repository structure")
-    #process(data["structure"], getcwd())
-    newprocess(data, getcwd())
-    exit(1)
+    # Format string templates read from data, but don't overwrite data.json file
+    output("o", "Specialising generic pct template")
+    data = pct_specialise(data)
+
+    # creating repository structure and writing files
+    output("o", "Creating repository structure and writing files")
+    process(data, getcwd())
 
     # create bash alias
     output("o", "Writing bash alias")
     mkba()
 
-    # bash alias will open code
+    # pct bash alias will open code
     output("o", "Opening vscode in new repository")
 
     return

@@ -150,3 +150,7 @@ def generate_or_update_template():
 
 def rename_dict_key(d):
     return {new_project_name if k == "npn_ph" else k:v for k,v in d.items()}
+
+def pct_specialise(data):
+    pass
+    return data
