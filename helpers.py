@@ -30,14 +30,14 @@ def set_npn(npn):
 
 def process(dictionary, root):
     for key in dictionary:
-        if type(dictionary[key]) == dict:
-            folder_name = "\\".join([root,key])
-            mkdir(folder_name)
-            process(dictionary[key], folder_name)
-        elif type(dictionary[key]) == list:
-            file_name = "\\".join([root,key])
-            with open(file_name, "w") as f:
-                f.write("\n".join(dictionary[key]))
+        filefoldername = "\\".join([root,key])
+        contents = dictionary[key]
+        if type(contents) == dict:
+            mkdir(filefoldername)
+            process(contents, filefoldername)
+        elif type(contents) == list:
+            with open(filefoldername, "w") as file:
+                file.write("\n".join(contents))
 
 def checkargs(args):
     # inspect.stack() returns the full stack trace info
