@@ -7,7 +7,10 @@ from helpers import (
     process, 
     checkargs, 
     set_npn, 
-    mkba
+    mkba,
+    generate_or_update_template,
+    rename_dict_key,
+    dj_is_old
 )
 
 def new(args):
@@ -23,18 +26,27 @@ def new(args):
 
     dj_path = __file__.replace("commands.py","data.json")
 
-    f = open(dj_path)
-    data = load(f)
+    # Boolean function for the local data.json being older than the latest push to the template repo
+    # dj_is_old()
 
-    # recursive function
-    output("o", "Creating repository structure")
-    process(data["structure"], getcwd())
+    if not exists(dj_path) or dj_is_old():
+        generate_or_update_template()
+
+    with open(dj_path, "r") as f:
+        data = load(f)
+
+    # set project root node name
+    data = rename_dict_key(data)
+
+    # creating repository structure and writing files
+    output("o", "Creating repository structure and writing files")
+    process(data, getcwd())
 
     # create bash alias
     output("o", "Writing bash alias")
     mkba()
 
-    # bash alias will open code
+    # pct bash alias will open code
     output("o", "Opening vscode in new repository")
 
     return
