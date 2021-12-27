@@ -10,7 +10,7 @@ from helpers import (
     mkba,
     generate_or_update_template,
     rename_dict_key,
-    pct_specialise
+    dj_is_old
 )
 
 def new(args):
@@ -26,10 +26,10 @@ def new(args):
 
     dj_path = __file__.replace("commands.py","data.json")
 
-    # Boolean for the local data.json being older than the latest push to the template repo
-    dj_is_old = False
+    # Boolean function for the local data.json being older than the latest push to the template repo
+    # dj_is_old()
 
-    if not exists(dj_path) or dj_is_old:
+    if not exists(dj_path) or dj_is_old():
         generate_or_update_template()
 
     with open(dj_path, "r") as f:
@@ -37,10 +37,6 @@ def new(args):
 
     # set project root node name
     data = rename_dict_key(data)
-
-    # Format string templates read from data, but don't overwrite data.json file
-    output("o", "Specialising generic pct template")
-    data = pct_specialise(data)
 
     # creating repository structure and writing files
     output("o", "Creating repository structure and writing files")

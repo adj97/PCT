@@ -36,6 +36,7 @@ def process(dictionary, root):
             mkdir(filefoldername)
             process(contents, filefoldername)
         elif type(contents) == list:
+            contents = _pct_specialise(contents)
             with open(filefoldername, "w") as file:
                 file.write("\n".join(contents))
 
@@ -101,10 +102,11 @@ def generate_or_update_template():
     # uri's
     template_remote_url = "https://github.com/adj97/PythonCliToolTemplate.git"
     template_local_path = getcwd() + "T_" + str(randint(100000, 999999))
+    template_remote_branch = 'main'
 
     # Pull template repo
     output("o", "Pulling remote template repo")
-    Repo.clone_from(template_remote_url, template_local_path, branch='main')
+    Repo.clone_from(template_remote_url, template_local_path, branch=template_remote_branch)
     _rmtree(template_local_path + "\.git")
 
     # initial empty data_json
@@ -142,6 +144,7 @@ def generate_or_update_template():
 
     # write to new datajson file
     dj_path = __file__.replace("helpers.py","data.json")
+    # open in "w" mode to overwrite if exists already (old)
     with open(dj_path, "w") as dj_file:
         dj_file.write(data_json_dump)
 
@@ -151,6 +154,13 @@ def generate_or_update_template():
 def rename_dict_key(d):
     return {new_project_name if k == "npn_ph" else k:v for k,v in d.items()}
 
-def pct_specialise(data):
-    pass
-    return data
+def _pct_specialise(template_lines: list[str]):
+    for i,line in enumerate(template_lines):
+        template_lines[i] = line.format(new_project_name)
+    return template_lines
+
+def dj_is_old():
+    # compare existing data.json file created date
+    # with the latest push to remote repo
+    djisold = False
+    return djisold
